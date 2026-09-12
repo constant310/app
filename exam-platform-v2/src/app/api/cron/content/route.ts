@@ -34,6 +34,15 @@ export async function GET(request: Request) {
 
   const db = getAdminDb();
   const now = new Date().toISOString();
+
+  // Idempotent: if today's challenge pairs already exist, these calls create nothing.
+  // WhatsApp posts are prepared in the same queue even while direct Channel publishing
+  // remains disabled; admins can copy/review them from the dashboard.
+  const [telegramSchedule, whatsappSchedule] = await Promise.all([
+    db.rpc('exam_generate_daily_challenge_schedule', { p_platform: 'telegram_channel' }),
+    db.rpc('exam_generate_daily_challenge_schedule', { p_platform: 'whatsapp_channel' }),
+  ]);
+
   const { data: duePosts, error } = await db
     .from('exam_content_posts')
     .select('id, platform, post_type, content, scheduled_at, status')
@@ -97,5 +106,16 @@ export async function GET(request: Request) {
     }
   }
 
-  return Response.json({ ok: true, checkedAt: now, processed: results.length, results });
+  return Response.json({
+    ok: true,
+    checkedAt: now,
+    scheduling: {
+      telegram: telegramSchedule.data ?? null,
+      telegramError: telegramSchedule.error?.message ?? null,
+      whatsapp: whatsappSchedule.data ?? null,
+      whatsappError: whatsappSchedule.error?.message ?? null,
+    },
+    processed: results.length,
+    results,
+  });
 }
