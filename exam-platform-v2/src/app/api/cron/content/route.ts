@@ -28,7 +28,8 @@ export async function GET(request: Request) {
   const cronSecret = process.env.CRON_SECRET;
   const auth = request.headers.get('authorization');
 
-  if (cronSecret && auth !== `Bearer ${cronSecret}`) {
+  // Fail closed: never allow the publishing endpoint to run without an explicit secret.
+  if (!cronSecret || auth !== `Bearer ${cronSecret}`) {
     return Response.json({ ok: false, error: 'Unauthorized' }, { status: 401 });
   }
 
