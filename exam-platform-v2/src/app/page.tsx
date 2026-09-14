@@ -1,4 +1,6 @@
 import { getAdminDb } from '@/lib/supabase-admin';
+import { requireSupportSession } from '@/lib/support-auth';
+import { logoutAction } from '@/app/actions/auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -23,6 +25,7 @@ function MetricCard({ label, value, hint }: { label: string; value: number | str
 }
 
 export default async function DashboardPage() {
+  const session = await requireSupportSession();
   const db = getAdminDb();
 
   const [metricsResult, reviewResult, postsResult] = await Promise.all([
@@ -55,8 +58,20 @@ export default async function DashboardPage() {
             Monitor the question bank, topic classification, drills, content publishing,
             review backlog and student discussions from one place.
           </p>
+          {session.user.must_change_password ? (
+            <p className="security-notice">Your admin account is marked for a password change. Change it before public launch.</p>
+          ) : null}
         </div>
-        <div className="status-pill">V2 Beta</div>
+        <div className="admin-controls">
+          <div className="admin-name">
+            <strong>{session.user.display_name}</strong>
+            <span>{session.user.role}</span>
+          </div>
+          <div className="status-pill">V2 Beta</div>
+          <form action={logoutAction}>
+            <button className="ghost-button" type="submit">Sign out</button>
+          </form>
+        </div>
       </header>
 
       <section className="metrics-grid" aria-label="Platform metrics">
@@ -121,9 +136,9 @@ export default async function DashboardPage() {
         <div className="roadmap-grid">
           <div><strong>Telegram Driller</strong><span>V2 beta deployed · scanning removed</span></div>
           <div><strong>Topic Engine</strong><span>Taxonomy live · classification in progress</span></div>
-          <div><strong>Telegram Channel</strong><span>Scheduler foundation ready</span></div>
-          <div><strong>WhatsApp Channel</strong><span>Publishing adapter pending</span></div>
-          <div><strong>Discussion Group</strong><span>Discussion schema ready</span></div>
+          <div><strong>Telegram Channel</strong><span>Supabase publisher ready · admin access pending</span></div>
+          <div><strong>WhatsApp Channel</strong><span>Challenges queued for manual/approved publishing</span></div>
+          <div><strong>Discussion Group</strong><span>Schema live · bot membership pending</span></div>
           <div><strong>Web Search</strong><span>Render SearXNG retained</span></div>
         </div>
       </section>
