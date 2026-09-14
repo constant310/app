@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { getAdminDb } from '@/lib/supabase-admin';
+import { getSupportDb } from '@/lib/supabase-support';
 
 export const SUPPORT_COOKIE = 'exam_support_session';
 
@@ -17,7 +17,7 @@ export async function getSupportSession() {
   const token = cookieStore.get(SUPPORT_COOKIE)?.value;
   if (!token) return null;
 
-  const { data, error } = await getAdminDb().rpc('support_me', { p_token: token });
+  const { data, error } = await getSupportDb().rpc('support_me', { p_token: token });
   if (error || !data?.id) return null;
 
   return { token, user: data as SupportUser };
