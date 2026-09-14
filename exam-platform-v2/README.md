@@ -1,48 +1,58 @@
-# Exam Platform V2
+# Exam Platform V2 — Admin Command Centre
 
-V2 combines a Telegram drilling bot, Supabase Exam Bank, admin/monitoring web app, scheduled Telegram Channel content, WhatsApp Channel preparation, and Telegram Group discussion workflows.
+The V2 web application is an **internal admin/control-centre only**. Students do not use this web app for normal practice.
 
-## Current V2 architecture
+## Production architecture
 
-- **Vercel / Next.js** — admin dashboard, monitoring, content scheduler and cron trigger.
-- **Supabase** — question bank, topics/subtopics, attempts, content schedule, discussion records and Telegram bot Edge Functions.
-- **Telegram Bot** — main driller and AI tutor.
-- **Telegram Channel** — scheduled challenge/answer posts.
-- **WhatsApp Channel** — challenge content queue; direct publishing adapter remains separate until an approved integration is configured.
-- **Telegram Group** — discussion/escalation for questions students still do not understand.
-- **Render** — retained only for the existing SearXNG web-search fallback.
+- **Vercel / Next.js** — private admin command centre: overview, question bank, review queue, publishing controls, discussions, analytics and system health.
+- **Supabase Exam Bank** — questions, topics/subtopics, attempts, schedules, discussions, support/admin sessions, Telegram bot Edge Functions and content publisher.
+- **Telegram Bot (`@jamb123bot`)** — student drills, topic practice, mocks, progress and AI tutoring.
+- **Telegram Channel (`@jamblink`)** — daily quiz challenges and scheduled answers/explanations.
+- **Telegram Group (`@jamblink1`)** — student discussion/escalation when the bot explanation is not enough.
+- **WhatsApp Channel** — acquisition and share-ready daily challenges linking students into the bot/ecosystem.
+- **Render** — retained only for SearXNG web-search fallback.
 
-## V2 bot
+## Admin modules
 
-The parallel Supabase Edge Function is `exam-bot-v2`.
+- Overview / Command Centre
+- Question Bank — search, topic corrections, public-channel verification
+- Review Queue — quality issues with resolution workflow
+- Publishing — daily schedule generation, Telegram readiness and cron controls
+- Discussions — student escalation tracking and resolution
+- Analytics — attempts, active students, accuracy, subject/topic trends
+- System Health — data-quality gates, service connectivity and admin audit log
 
-Changes from V1:
+## Security model
 
-- Image/OCR question scanning removed.
-- Year drilling retained.
-- Topic drilling added.
-- Topic/subtopic labels included in question payloads.
-- Random subject drilling retained.
-- Attempts are recorded.
-- AI is used for explanations and follow-up tutoring rather than every question interaction.
+- Uses the existing Exam Bank support/admin accounts.
+- Admin session token is stored in an HTTP-only cookie.
+- Browser code uses only the Supabase publishable key.
+- Privileged reads and writes go through token-gated RPCs.
+- No Supabase service-role key or Telegram bot token is exposed to Vercel/browser clients.
+- Admin pages are no-index/no-follow and redirect unauthenticated users to `/login`.
 
 ## Vercel root directory
 
-When creating the Vercel project from `constant310/app`, set the Root Directory to:
+When importing `constant310/app`, use:
 
 `exam-platform-v2`
 
-## Required environment variables
+## Environment
 
-Copy `.env.example` into the Vercel project settings and provide the values through encrypted environment variables. Never commit live tokens or service-role keys.
+The app can use the values in `.env.example`:
 
-## Content schedule
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
 
-The Vercel cron trigger checks the publishing queue at:
+Both are public client configuration values; private bot/publisher credentials remain in Supabase.
 
-- 06:00 UTC / 07:00 WAT
-- 11:00 UTC / 12:00 WAT
-- 15:00 UTC / 16:00 WAT
-- 19:00 UTC / 20:00 WAT
+## Publishing schedule
 
-Only due rows in `exam_content_posts` with status `approved` or `scheduled` are processed.
+Publishing itself runs from the existing Supabase scheduler/publisher at WAT slots:
+
+- 07:00 — Question 1
+- 12:00 — Answer/explanation 1
+- 16:00 — Question 2
+- 20:00 — Answer/explanation 2
+
+The Vercel admin app controls and monitors this system; it does not hold the Telegram bot token.
