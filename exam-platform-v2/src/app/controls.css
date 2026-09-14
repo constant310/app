@@ -1,0 +1,17 @@
+.control-panel { margin-bottom: 18px; }
+.control-copy { color: var(--muted); line-height: 1.6; margin: 0 0 16px; max-width: 820px; }
+.control-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.primary-button, .danger-button {
+  border: 0;
+  border-radius: 12px;
+  padding: 11px 15px;
+  font-weight: 850;
+  cursor: pointer;
+  transition: transform .15s ease, opacity .15s ease;
+}
+.primary-button { background: var(--accent); color: #04111c; }
+.danger-button { background: rgba(252,165,165,.14); color: var(--danger); border: 1px solid rgba(252,165,165,.35); }
+.primary-button:hover:not(:disabled), .danger-button:hover:not(:disabled) { transform: translateY(-1px); }
+.primary-button:disabled, .danger-button:disabled { opacity: .42; cursor: not-allowed; }
+.verification-time { color: var(--muted); font-size: .78rem; margin: 12px 0 0; }
+.error-text { color: var(--danger) !important; }
