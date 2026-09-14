@@ -2,7 +2,7 @@
 
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { getAdminDb } from '@/lib/supabase-admin';
+import { getSupportDb } from '@/lib/supabase-support';
 import { SUPPORT_COOKIE } from '@/lib/support-auth';
 
 export async function loginAction(formData: FormData) {
@@ -11,7 +11,7 @@ export async function loginAction(formData: FormData) {
 
   if (!username || !password) redirect('/login?error=missing');
 
-  const { data, error } = await getAdminDb().rpc('support_login', {
+  const { data, error } = await getSupportDb().rpc('support_login', {
     p_username: username,
     p_password: password,
   });
@@ -39,7 +39,7 @@ export async function logoutAction() {
 
   if (token) {
     try {
-      await getAdminDb().rpc('support_logout', { p_token: token });
+      await getSupportDb().rpc('support_logout', { p_token: token });
     } catch {
       // Clear the browser session even if the backend logout call is unavailable.
     }
