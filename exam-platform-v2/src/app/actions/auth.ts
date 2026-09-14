@@ -38,7 +38,11 @@ export async function logoutAction() {
   const token = cookieStore.get(SUPPORT_COOKIE)?.value;
 
   if (token) {
-    await getAdminDb().rpc('support_logout', { p_token: token }).catch(() => undefined);
+    try {
+      await getAdminDb().rpc('support_logout', { p_token: token });
+    } catch {
+      // Clear the browser session even if the backend logout call is unavailable.
+    }
   }
 
   cookieStore.set(SUPPORT_COOKIE, '', {
