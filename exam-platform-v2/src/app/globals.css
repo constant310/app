@@ -23,6 +23,7 @@ body {
   color: var(--text);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
+button, input { font: inherit; }
 
 .shell { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 42px 0 80px; }
 .hero { display: flex; align-items: flex-start; justify-content: space-between; gap: 28px; margin-bottom: 28px; }
@@ -30,6 +31,13 @@ body {
 .hero p { max-width: 760px; color: var(--muted); line-height: 1.65; margin: 0; }
 .eyebrow { color: var(--accent) !important; text-transform: uppercase; letter-spacing: .12em; font-size: .76rem; font-weight: 800; }
 .status-pill { border: 1px solid rgba(125, 211, 252, .3); background: rgba(125, 211, 252, .08); color: var(--accent); padding: 9px 12px; border-radius: 999px; white-space: nowrap; font-size: .82rem; font-weight: 700; }
+.admin-controls { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 10px; }
+.admin-name { display: grid; text-align: right; gap: 2px; margin-right: 2px; }
+.admin-name strong { font-size: .82rem; }
+.admin-name span { color: var(--muted); font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; }
+.ghost-button { border: 1px solid var(--line); background: rgba(8,17,31,.6); color: var(--text); padding: 9px 12px; border-radius: 999px; cursor: pointer; }
+.ghost-button:hover { border-color: rgba(125,211,252,.45); }
+.security-notice { margin-top: 12px !important; color: var(--warn) !important; font-size: .88rem; }
 
 .metrics-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 18px; }
 .metric-card, .panel { background: linear-gradient(180deg, rgba(19,35,58,.96), rgba(15,27,45,.96)); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 18px 40px rgba(0,0,0,.16); }
@@ -56,6 +64,17 @@ body {
 .roadmap-grid > div { background: rgba(8,17,31,.5); border: 1px solid rgba(36,54,83,.75); border-radius: 13px; padding: 15px; display: grid; gap: 6px; }
 .roadmap-grid span { color: var(--muted); font-size: .84rem; line-height: 1.45; }
 
+.login-shell { min-height: 100vh; display: grid; place-items: center; padding: 24px; }
+.login-card { width: min(460px, 100%); background: linear-gradient(180deg, rgba(19,35,58,.98), rgba(15,27,45,.98)); border: 1px solid var(--line); border-radius: 22px; padding: 28px; box-shadow: 0 28px 80px rgba(0,0,0,.32); }
+.login-card h1 { font-size: 2rem; margin: 4px 0 10px; }
+.login-copy { color: var(--muted); line-height: 1.6; margin: 0 0 20px; }
+.login-error { border: 1px solid rgba(252,165,165,.3); background: rgba(252,165,165,.08); color: var(--danger); border-radius: 12px; padding: 11px 12px; margin-bottom: 16px; font-size: .88rem; }
+.login-form { display: grid; gap: 15px; }
+.login-form label { display: grid; gap: 7px; color: var(--muted); font-size: .82rem; font-weight: 700; }
+.login-form input { width: 100%; border: 1px solid var(--line); background: rgba(8,17,31,.7); color: var(--text); border-radius: 12px; padding: 12px 13px; outline: none; }
+.login-form input:focus { border-color: rgba(125,211,252,.65); box-shadow: 0 0 0 3px rgba(125,211,252,.08); }
+.login-form button { border: 0; background: var(--accent); color: #04111c; font-weight: 900; border-radius: 12px; padding: 12px 16px; cursor: pointer; margin-top: 4px; }
+
 @media (max-width: 900px) {
   .metrics-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
   .two-column { grid-template-columns: 1fr; }
@@ -65,6 +84,9 @@ body {
 @media (max-width: 560px) {
   .shell { width: min(100% - 22px, 1180px); padding-top: 26px; }
   .hero { flex-direction: column; }
+  .admin-controls { justify-content: flex-start; }
+  .admin-name { text-align: left; width: 100%; }
   .metrics-grid, .roadmap-grid { grid-template-columns: 1fr; }
   .metric-card { min-height: 108px; }
+  .login-card { padding: 22px; }
 }
