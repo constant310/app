@@ -10,7 +10,8 @@ type Props = { searchParams: Promise<{ status?:string; severity?:string }> };
 
 export default async function ReviewsPage({ searchParams }: Props) {
   const params = await searchParams;
-  const { session, data } = await adminRpc<Payload>('support_v2_reviews', { p_status: params.status || null, p_severity: params.severity || null, p_limit: 50, p_offset: 0 });
+  const selectedStatus = params.status ?? 'open';
+  const { session, data } = await adminRpc<Payload>('support_v2_reviews', { p_status: selectedStatus || null, p_severity: params.severity || null, p_limit: 50, p_offset: 0 });
   return (
     <AdminShell active="reviews" title="Content Review" subtitle="Work the quality backlog before questions become trusted public challenge content." user={session.user}>
       <section className="stats-grid compact">
@@ -20,7 +21,7 @@ export default async function ReviewsPage({ searchParams }: Props) {
       </section>
       <section className="panel filter-panel">
         <form className="filter-form short">
-          <label><span>Status</span><select name="status" defaultValue={params.status || 'open'}><option value="">All</option><option value="open">Open</option><option value="reviewing">Reviewing</option><option value="resolved">Resolved</option><option value="dismissed">Dismissed</option></select></label>
+          <label><span>Status</span><select name="status" defaultValue={selectedStatus}><option value="">All</option><option value="open">Open</option><option value="reviewing">Reviewing</option><option value="resolved">Resolved</option><option value="dismissed">Dismissed</option></select></label>
           <label><span>Severity</span><select name="severity" defaultValue={params.severity || ''}><option value="">All severities</option><option value="critical">Critical</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select></label>
           <button className="primary-button" type="submit">Apply</button>
         </form>
