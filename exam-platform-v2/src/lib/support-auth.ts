@@ -28,3 +28,9 @@ export async function requireSupportSession() {
   if (!session) redirect('/login');
   return session;
 }
+
+export async function requireAdminSession() {
+  const session = await requireSupportSession();
+  if (session.user.role !== 'admin') throw new Error('Admin access required.');
+  return session;
+}
